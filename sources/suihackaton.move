@@ -1,73 +1,117 @@
-module suihackaton::tickets {
+module suihackaton::charity {
     use std::string::{Self, String};
-    
-    // Error codes for debugging
-    const ENotOrganizer: u64 = 0;
-    const EAlreadyUsed: u64 = 1;
+    use sui::coin::{Self, Coin};
+    use sui::sui::SUI;
+    use sui::event;
 
-    // The Ticket Object - owned by the attendee
-    public struct Ticket has key, store {
+    const NGO_ADDRESS: address = @0x15185806a896f6b6a9d9eb1c433bdc0b9817528e520f4000988d50658a5a27c7; // <--- PUNE ADRESA TA AICI
+
+    // NFT-ul pe care îl primește donatorul
+    public struct DonationNFT has key, store {
         id: UID,
-        event_name: String,
-        description: String,
-        date: String,
-        seat_number: String,
-        is_used: bool, // Tracks if the ticket has been scanned
+        amount_donated: u64, // Cât a donat (în MIST, unitatea mică a SUI)
+        tier: String,        // "Gold", "Silver", etc.
+        image_url: String,   // Poză drăguță cu cauza
+        timestamp: u64       // Când a donat
     }
 
-    // The Organizer Capability - limits controls to the creator
-    public struct OrganizerCap has key, store {
-        id: UID,
+    // Eveniment pentru a notifica frontend-ul că s-a făcut o donație
+    public struct DonationEvent has copy, drop {
+        donor: address,
+        amount: u64
     }
 
-    // Module Initializer: Runs once on deployment
-    // Creates the OrganizerCap and sends it to the deployer
-    fun init(ctx: &mut TxContext) {
-        let organizer_cap = OrganizerCap {
-            id: object::new(ctx)
+    // Funcția principală: Donează și primește NFT
+    public fun donate_for_cause(
+        payment: Coin<SUI>, // Utilizatorul trimite moneda SUI direct în funcție
+        ctx: &mut TxContext
+    ) {
+        let amount = coin::value(&payment);
+        let sender = tx_context::sender(ctx);
+
+        // 1. Determină "Rangul" donatorului în funcție de sumă
+        // Notă: 1 SUI = 1.000.000.000 MIST
+        let tier_str = if (amount >= 100_000_000_000) { 
+            b"Gold Philanthropist" // > 100 SUI
+        } else if (amount >= 10_000_000_000) {
+            b"Silver Supporter"    // > 10 SUI
+        } else {
+            b"Bronze Helper"
         };
-        transfer::transfer(organizer_cap, ctx.sender());
+
+        // 2. Creează NFT-ul de mulțumire
+        let nft = DonationNFT {
+            id: object::new(ctx),
+            amount_donated: amount,
+            tier: string::utf8(tier_str),
+            // Poți pune un URL real către o imagine IPFS sau serverul vostru
+            image_url: string::utf8(b"https://nfpass.app/images/thank-you.png"),
+            timestamp: tx_context::epoch(ctx)
+        };
+
+        // 3. Trimite BANII la ONG
+        transfer::public_transfer(payment, NGO_ADDRESS);
+
+        // 4. Trimite NFT-ul la DONATOR
+        transfer::public_transfer(nft, sender);
+
+        // 5. Emite evenimentul (pentru a actualiza bara de progres pe site)
+        event::emit(DonationEvent {
+            donor: sender,
+            amount: amount
+        });
+    }
+}
+module suihackaton::volunteer {
+    use std::string::{Self, String};
+
+    public struct VolunteerBadge has key { 
+        id: UID,
+        volunteer_name: String,
+        organization: String,
+        total_hours: u64,      // Câte ore a muncit
+        events_attended: u64,  // La câte evenimente a participat
+        rank: String,          // Ex: "Începător", "Activ", "Veteran"
     }
 
-    // Mint Function: Create a new ticket and send it to an attendee
-    // Only the owner of OrganizerCap can call this
-    public fun mint_ticket(
-        _cap: &OrganizerCap, // Authorization check
-        event_name: vector<u8>,
-        description: vector<u8>,
-        date: vector<u8>,
-        seat_number: vector<u8>,
+    // Capability pentru organizatori (rămâne la fel)
+    public struct OrganizerCap has key, store { id: UID }
+
+    // Funcția de înregistrare a unui voluntar nou (Minting)
+    public fun register_volunteer(
+        _cap: &OrganizerCap, 
+        name: vector<u8>,
         recipient: address,
         ctx: &mut TxContext
     ) {
-        let ticket = Ticket {
+        let badge = VolunteerBadge {
             id: object::new(ctx),
-            event_name: string::utf8(event_name),
-            description: string::utf8(description),
-            date: string::utf8(date),
-            seat_number: string::utf8(seat_number),
-            is_used: false, // Default state is unused
+            volunteer_name: string::utf8(name),
+            organization: string::utf8(b"Green Earth NGO"),
+            total_hours: 0,
+            events_attended: 0,
+            rank: string::utf8(b"Rookie"),
         };
-
-        // Transfer the Ticket object directly to the attendee
-        transfer::public_transfer(ticket, recipient);
+        // Trimitem badge-ul voluntarului
+        transfer::transfer(badge, recipient);
     }
 
-    // Validation Function: "Scans" the ticket at the entrance
-    // Checks if used, marks as used. Requires OrganizerCap.
-    public fun validate_ticket(
+    // Funcția MAGICĂ: Check-in la activitate
+    // Organizatorul scanează badge-ul și adaugă ore
+    public fun log_activity(
         _cap: &OrganizerCap, 
-        ticket: &mut Ticket
+        badge: &mut VolunteerBadge, 
+        hours: u64
     ) {
-        // 1. Check if the ticket has already been used
-        assert!(ticket.is_used == false, EAlreadyUsed);
+        // 1. Actualizăm statistica
+        badge.total_hours = badge.total_hours + hours;
+        badge.events_attended = badge.events_attended + 1;
 
-        // 2. Mark the ticket as used
-        ticket.is_used = true;
-    }
-    
-    // Helper function to read ticket status (anyone can call)
-    public fun is_ticket_used(ticket: &Ticket): bool {
-        ticket.is_used
+        // 2. Logică de Gamification (Upgrade automat)
+        if (badge.total_hours >= 100) {
+            badge.rank = string::utf8(b"VETERAN - Gold Tier");
+        } else if (badge.total_hours >= 50) {
+            badge.rank = string::utf8(b"CAPTAIN - Silver Tier");
+        };
     }
 }
