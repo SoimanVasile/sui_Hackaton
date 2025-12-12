@@ -21,7 +21,6 @@ export function TicketCard({ ticket }: TicketProps) {
       {/* 1. NFT Image (Left Side) */}
       <div className="w-full md:w-1/3 relative overflow-hidden h-56 md:h-auto bg-gray-100">
         <img 
-          // Fix IPFS links if necessary
           src={ticket.img.replace("ipfs://", "https://ipfs.io/ipfs/")} 
           alt={ticket.title} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 

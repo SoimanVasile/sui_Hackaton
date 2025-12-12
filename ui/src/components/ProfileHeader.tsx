@@ -6,7 +6,6 @@ import { ProfileInfo } from "./profile/ProfileInfo";
 export function ProfileHeader() {
   const account = useCurrentAccount();
   
-  // Datele implicite
   const defaultProfile = {
     name: "Enter a name...",
     bio: "Write a bio...",
@@ -15,7 +14,6 @@ export function ProfileHeader() {
     avatar: ""
   };
 
-  // 1. Inițializăm starea citind din LocalStorage
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("ticketHub_profile");
     return saved ? JSON.parse(saved) : defaultProfile;
@@ -29,11 +27,9 @@ export function ProfileHeader() {
     setIsEditing(true); 
   };
 
-  // 2. Modificăm funcția de salvare
   const handleSave = () => { 
     setProfile(tempProfile); 
     
-    // Scriem datele permanent în browser
     localStorage.setItem("ticketHub_profile", JSON.stringify(tempProfile));
     
     setIsEditing(false); 
@@ -43,7 +39,6 @@ export function ProfileHeader() {
     setIsEditing(false); 
   };
 
-  // Helper pentru actualizarea câmpurilor
   const handleInfoChange = (field: string, value: string) => {
     setTempProfile((prev: any) => ({ ...prev, [field]: value }));
   };

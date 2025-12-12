@@ -11,10 +11,8 @@ import { TransactionHistory } from "../components/wallet/TransactionHistory";
 export function WalletPage() {
   const account = useCurrentAccount();
   
-  // 1. FETCH REAL TICKETS (NFTs)
   const { tickets, isLoading } = useUserTickets();
 
-  // 2. Fetch Balance
   const { data: balanceData, isPending: isBalancePending } = useSuiClientQuery(
     'getBalance',
     { owner: account?.address || '' },
@@ -26,7 +24,6 @@ export function WalletPage() {
   const suiPrice = 3.50;
   const balanceUSD = (balanceSUI * suiPrice).toFixed(2);
   
-  // Dynamic calculation based on real tickets
   const totalSpent = tickets.length * 10; 
 
   if (!account) {
@@ -53,10 +50,8 @@ export function WalletPage() {
 
       <WalletStats totalSpent={totalSpent} />
 
-      {/* Pass the REAL tickets to the component */}
       <WalletAssets tickets={tickets} />
 
-      {/* We reuse the tickets for history too */}
       <TransactionHistory tickets={tickets} />
 
     </div>

@@ -1,9 +1,7 @@
 import { Image, ExternalLink } from "lucide-react";
-// Removed MY_TICKETS import
 
-// Define what data this component expects
 interface WalletAssetsProps {
-  tickets: any[]; // We use the data from our hook
+  tickets: any[];
 }
 
 export function WalletAssets({ tickets }: WalletAssetsProps) {
@@ -23,7 +21,6 @@ export function WalletAssets({ tickets }: WalletAssetsProps) {
             <div key={nft.id} className="border border-gray-100 rounded-2xl p-3 flex gap-4 hover:shadow-md transition-shadow cursor-pointer group">
               
               <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 relative">
-                {/* Use the IPFS/HTTP url directly from blockchain */}
                 <img 
                   src={nft.img.replace("ipfs://", "https://ipfs.io/ipfs/")} 
                   alt={nft.title} 

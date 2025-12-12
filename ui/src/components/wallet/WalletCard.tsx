@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Wallet, Plus } from "lucide-react";
-import { TopUpModal } from "./TopUpModal"; // Importăm componenta nouă
+import { TopUpModal } from "./TopUpModal";
 
 interface WalletCardProps {
   balanceSUI: number;
@@ -10,7 +10,6 @@ interface WalletCardProps {
 }
 
 export function WalletCard({ balanceSUI, balanceUSD, address, isPending }: WalletCardProps) {
-  // Stare pentru a controla dacă Modalul este deschis sau închis
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -26,7 +25,6 @@ export function WalletCard({ balanceSUI, balanceUSD, address, isPending }: Walle
               <Wallet size={16}/> Wallet Balance
             </div>
             
-            {/* BUTTON FUNCTIONAL: Deschide Modalul */}
             <button 
               onClick={() => setIsModalOpen(true)}
               className="bg-white text-brand-600 hover:bg-gray-50 px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg active:scale-95"
@@ -53,7 +51,6 @@ export function WalletCard({ balanceSUI, balanceUSD, address, isPending }: Walle
         </div>
       </div>
 
-      {/* Randăm Modalul doar dacă isModalOpen este true */}
       {isModalOpen && (
         <TopUpModal 
           address={address} 

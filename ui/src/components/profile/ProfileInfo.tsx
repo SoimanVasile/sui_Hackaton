@@ -21,14 +21,12 @@ export function ProfileInfo({ isEditing, data, onChange, walletAddress }: Profil
             type="text" 
             value={data.name}
             onChange={(e) => onChange("name", e.target.value)}
-            // UPDATED: Now uses the same "box" style as the description
             className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-3xl font-bold text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none"
             placeholder="Your Name"
           />
         ) : (
           <h1 className="text-3xl font-bold text-gray-900 px-3 py-3 border border-transparent">{data.name}</h1>
         )}
-        {/* Added padding to address so it aligns with the box above */}
         <p className="text-gray-500 font-medium mt-1 px-3">{walletAddress}</p>
       </div>
 
@@ -54,7 +52,6 @@ export function ProfileInfo({ isEditing, data, onChange, walletAddress }: Profil
              <input 
                value={data.location}
                onChange={(e) => onChange("location", e.target.value)}
-               // UPDATED: Box style for location too
                className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 text-gray-700 focus:ring-2 focus:ring-brand-500 outline-none w-48"
                placeholder="City, Country"
              />

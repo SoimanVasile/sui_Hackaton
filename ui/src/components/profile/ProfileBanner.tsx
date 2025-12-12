@@ -16,7 +16,6 @@ export function ProfileBanner({ isEditing, avatar, onAvatarChange, onEdit, onSav
       
       <div className="px-8 pb-8">
         <div className="flex justify-between items-end -mt-16 mb-6">
-           {/* Avatar Circle */}
            <div className="relative group">
              <img 
                src={avatar} 
@@ -25,7 +24,6 @@ export function ProfileBanner({ isEditing, avatar, onAvatarChange, onEdit, onSav
                onError={(e) => e.currentTarget.src = "https://via.placeholder.com/150"} 
              />
              
-             {/* Edit Overlay */}
              {isEditing && (
                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-4 border-transparent">
                  <Camera className="text-white" size={24} />
@@ -34,7 +32,7 @@ export function ProfileBanner({ isEditing, avatar, onAvatarChange, onEdit, onSav
                     className="absolute inset-0 opacity-0 cursor-pointer"
                     title="Paste Image URL"
                     onClick={(e) => {
-                      e.preventDefault(); // Prevent file dialog
+                      e.preventDefault();
                       const url = prompt("Paste new Image URL:");
                       if(url) onAvatarChange(url);
                     }}
@@ -43,7 +41,6 @@ export function ProfileBanner({ isEditing, avatar, onAvatarChange, onEdit, onSav
              )}
            </div>
 
-           {/* Action Buttons */}
            <div className="flex gap-2">
              {isEditing ? (
                <>

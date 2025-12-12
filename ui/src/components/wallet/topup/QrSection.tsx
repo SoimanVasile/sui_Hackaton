@@ -16,7 +16,7 @@ export function QrSection({ address }: QrSectionProps) {
           <QRCode
             size={256}
             style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            value={address} // The QR contains your address
+            value={address}
             viewBox={`0 0 256 256`}
             fgColor="#7c3aed"
           />

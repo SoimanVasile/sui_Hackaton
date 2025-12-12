@@ -4,7 +4,6 @@ interface Ticket {
   id: number;
   title: string;
   date: string;
-  // adaugă alte câmpuri dacă e necesar
 }
 
 interface TransactionHistoryProps {
@@ -20,7 +19,6 @@ export function TransactionHistory({ tickets }: TransactionHistoryProps) {
       </div>
       
       <div className="space-y-4">
-        {/* Lista Bilete (Cheltuieli) */}
         {tickets.map((ticket) => (
           <div key={ticket.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-2xl transition-all border border-transparent hover:border-gray-100 group">
             <div className="flex items-center gap-4">

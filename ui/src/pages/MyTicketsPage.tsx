@@ -1,5 +1,5 @@
 import { Ticket } from "lucide-react";
-import { useUserTickets } from "../hooks/useUserTickets"; // Use the hook
+import { useUserTickets } from "../hooks/useUserTickets";
 import { TicketCard } from "../components/tickets/TicketCard";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 
@@ -28,13 +28,12 @@ export function MyTicketsPage() {
            <p>Loading your NFTs...</p>
         ) : tickets.length > 0 ? (
           tickets.map(ticket => (
-            // We need to map our NFT data to the TicketCard format
             <TicketCard 
                 key={ticket.id} 
                 ticket={{
                     ...ticket,
-                    date: "Open Access", // Generic date for NFTs
-                    loc: "Digital / Global", // Generic location
+                    date: "Open Access",
+                    loc: "Digital / Global", 
                     status: "Owned"
                 }} 
             />

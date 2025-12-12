@@ -55,14 +55,13 @@ export function EventsPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       
-      {/* 1. Filter Section */}
       <EventFilters 
         activeFilter={activeFilter}
+        searchQuery={searchQuery}
         onFilterChange={setActiveFilter}
         onSearchChange={setSearchQuery}
       />
 
-      {/* 2. Grid Section */}
       <EventGrid 
         events={filteredEvents}
         isLoading={isLoading}
