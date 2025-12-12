@@ -21,12 +21,15 @@ export function ProfileInfo({ isEditing, data, onChange, walletAddress }: Profil
             type="text" 
             value={data.name}
             onChange={(e) => onChange("name", e.target.value)}
-            className="text-3xl font-bold text-gray-900 w-full border-b-2 border-brand-200 focus:border-brand-500 outline-none pb-1"
+            // UPDATED: Now uses the same "box" style as the description
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-3xl font-bold text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none"
+            placeholder="Your Name"
           />
         ) : (
-          <h1 className="text-3xl font-bold text-gray-900">{data.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 px-3 py-3 border border-transparent">{data.name}</h1>
         )}
-        <p className="text-gray-500 font-medium mt-1">{walletAddress}</p>
+        {/* Added padding to address so it aligns with the box above */}
+        <p className="text-gray-500 font-medium mt-1 px-3">{walletAddress}</p>
       </div>
 
       {/* Bio Field */}
@@ -39,19 +42,21 @@ export function ProfileInfo({ isEditing, data, onChange, walletAddress }: Profil
             placeholder="Tell us about yourself..."
           />
         ) : (
-          <p className="text-gray-600 max-w-2xl leading-relaxed">{data.bio}</p>
+          <p className="text-gray-600 max-w-2xl leading-relaxed px-3 py-2">{data.bio}</p>
         )}
       </div>
       
-      {/* Footer Info */}
-      <div className="flex gap-8 text-sm font-medium text-gray-500 border-t border-gray-100 pt-6">
+      {/* Footer Info (Location & Date) */}
+      <div className="flex gap-8 text-sm font-medium text-gray-500 border-t border-gray-100 pt-6 px-3">
          <div className="flex items-center gap-2">
            <div className="w-2 h-2 bg-gray-300 rounded-full"></div> 
            {isEditing ? (
              <input 
                value={data.location}
                onChange={(e) => onChange("location", e.target.value)}
-               className="border-b border-gray-300 focus:border-brand-500 outline-none w-32"
+               // UPDATED: Box style for location too
+               className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 text-gray-700 focus:ring-2 focus:ring-brand-500 outline-none w-48"
+               placeholder="City, Country"
              />
            ) : data.location}
          </div>
