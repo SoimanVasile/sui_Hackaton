@@ -8,8 +8,8 @@ export function Navbar() {
 
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-      <div className="text-2xl font-bold text-brand-600 tracking-tight flex items-center gap-2">
-        Ticket<span className="text-gray-900">Hub</span>
+      <div className="text-2xl font-bold text-brand-600 tracking-tight flex items-center">
+        NF<span className="text-gray-900">Pass</span>
       </div>
 
       <div className="hidden md:flex items-center gap-2">
