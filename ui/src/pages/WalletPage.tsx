@@ -1,28 +1,34 @@
 import { useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
 import { AlertCircle } from "lucide-react";
-import { MY_TICKETS } from "../data";
+// Import the new hook
+import { useUserTickets } from "../hooks/useUserTickets"; 
+
 import { WalletCard } from "../components/wallet/WalletCard";
 import { WalletStats } from "../components/wallet/WalletStats";
+import { WalletAssets } from "../components/wallet/WalletAssets";
 import { TransactionHistory } from "../components/wallet/TransactionHistory";
 
 export function WalletPage() {
   const account = useCurrentAccount();
+  
+  // 1. FETCH REAL TICKETS (NFTs)
+  const { tickets, isLoading } = useUserTickets();
 
-  // 1. Data Fetching
-  const { data: balanceData, isPending } = useSuiClientQuery(
+  // 2. Fetch Balance
+  const { data: balanceData, isPending: isBalancePending } = useSuiClientQuery(
     'getBalance',
     { owner: account?.address || '' },
     { enabled: !!account }
   );
 
-  // 2. Calculations
   const totalMist = balanceData ? parseInt(balanceData.totalBalance) : 0;
   const balanceSUI = totalMist / 1_000_000_000;
   const suiPrice = 3.50;
   const balanceUSD = (balanceSUI * suiPrice).toFixed(2);
-  const totalSpent = MY_TICKETS.length * 15; // Mock calculation
+  
+  // Dynamic calculation based on real tickets
+  const totalSpent = tickets.length * 10; 
 
-  // 3. Not Connected State
   if (!account) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-20 text-center">
@@ -35,7 +41,6 @@ export function WalletPage() {
     );
   }
 
-  // 4. Render Main Page
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
       
@@ -43,12 +48,16 @@ export function WalletPage() {
         balanceSUI={balanceSUI}
         balanceUSD={balanceUSD}
         address={account.address}
-        isPending={isPending}
+        isPending={isBalancePending}
       />
 
       <WalletStats totalSpent={totalSpent} />
 
-      <TransactionHistory tickets={MY_TICKETS} />
+      {/* Pass the REAL tickets to the component */}
+      <WalletAssets tickets={tickets} />
+
+      {/* We reuse the tickets for history too */}
+      <TransactionHistory tickets={tickets} />
 
     </div>
   );

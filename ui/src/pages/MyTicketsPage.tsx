@@ -1,36 +1,50 @@
-import { Calendar, MapPin, QrCode, Download } from "lucide-react";
-import { MY_TICKETS } from "../data";
+import { Ticket } from "lucide-react";
+import { useUserTickets } from "../hooks/useUserTickets"; // Use the hook
+import { TicketCard } from "../components/tickets/TicketCard";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 
 export function MyTicketsPage() {
+  const account = useCurrentAccount();
+  const { tickets, isLoading } = useUserTickets();
+
+  if (!account) {
+     return <div className="text-center py-20">Please connect your wallet.</div>;
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">My Tickets</h2>
-      {MY_TICKETS.map(ticket => (
-        <div key={ticket.id} className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col md:flex-row gap-8 shadow-card mb-6">
-          <img src={ticket.img} className="w-full md:w-56 h-36 object-cover rounded-xl" alt="Ticket" />
-          <div className="flex-1 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start mb-3">
-                <span className="px-3 py-1 bg-purple-50 text-brand-600 rounded-full text-xs font-bold uppercase">{ticket.category}</span>
-                <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold uppercase">{ticket.status}</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{ticket.title}</h3>
-              <div className="text-gray-500 text-sm flex gap-6">
-                 <span className="flex items-center gap-1"><Calendar size={14}/> {ticket.date}</span>
-                 <span className="flex items-center gap-1"><MapPin size={14}/> {ticket.loc}</span>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6 md:mt-0">
-              <button className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-medium hover:bg-brand-700 transition-colors shadow-lg shadow-brand-200">
-                <QrCode size={18}/> View QR
-              </button>
-              <button className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                <Download size={18}/> PDF
-              </button>
-            </div>
-          </div>
+      <div className="flex items-center gap-3 mb-8">
+        <div className="bg-brand-100 p-3 rounded-2xl text-brand-600">
+          <Ticket size={24} />
         </div>
-      ))}
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">My NFT Tickets</h2>
+          <p className="text-gray-500">Manage your collectibles and access events</p>
+        </div>
+      </div>
+
+      <div className="grid gap-6">
+        {isLoading ? (
+           <p>Loading your NFTs...</p>
+        ) : tickets.length > 0 ? (
+          tickets.map(ticket => (
+            // We need to map our NFT data to the TicketCard format
+            <TicketCard 
+                key={ticket.id} 
+                ticket={{
+                    ...ticket,
+                    date: "Open Access", // Generic date for NFTs
+                    loc: "Digital / Global", // Generic location
+                    status: "Owned"
+                }} 
+            />
+          ))
+        ) : (
+          <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 border-dashed">
+            <p className="text-gray-400 text-lg">You don't have any NFTs in this wallet.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
