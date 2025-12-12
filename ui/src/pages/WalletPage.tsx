@@ -1,43 +1,33 @@
-import { useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
-import { AlertCircle } from "lucide-react";
-// Import the new hook
-import { useUserTickets } from "../hooks/useUserTickets"; 
-
+import { useWalletData } from "../hooks/useWalletData"; // Our new hook
 import { WalletCard } from "../components/wallet/WalletCard";
 import { WalletStats } from "../components/wallet/WalletStats";
 import { WalletAssets } from "../components/wallet/WalletAssets";
 import { TransactionHistory } from "../components/wallet/TransactionHistory";
+import { WalletNotConnected } from "../components/wallet/WalletNotConnected";
 
 export function WalletPage() {
-  const account = useCurrentAccount();
-  
-  const { tickets, isLoading } = useUserTickets();
+  // All logic is now hidden inside this hook
+  const { 
+    account, 
+    tickets, 
+    balanceSUI, 
+    balanceUSD, 
+    totalSpent, 
+    totalReceived, 
+    isLoading 
+  } = useWalletData();
 
-  const { data: balanceData, isPending: isBalancePending } = useSuiClientQuery(
-    'getBalance',
-    { owner: account?.address || '' },
-    { enabled: !!account }
-  );
-
-  const totalMist = balanceData ? parseInt(balanceData.totalBalance) : 0;
-  const balanceSUI = totalMist / 1_000_000_000;
-  const suiPrice = 3.50;
-  const balanceUSD = (balanceSUI * suiPrice).toFixed(2);
-  
-  const totalSpent = tickets.length * 10; 
-
+  // 1. Show Warning if not connected
   if (!account) {
-    return (
-      <div className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <div className="bg-white rounded-3xl p-10 shadow-card inline-block border border-red-100">
-          <AlertCircle className="w-16 h-16 text-brand-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Wallet Not Connected</h2>
-          <p className="text-gray-500">Please connect your Sui wallet using the button in the navbar.</p>
-        </div>
-      </div>
-    );
+    return <WalletNotConnected />;
   }
 
+  // 2. Show Loading State (Optional, but good UX)
+  if (isLoading) {
+    return <div className="text-center py-20 text-gray-400">Loading wallet data...</div>;
+  }
+
+  // 3. Show The Wallet Dashboard
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
       
@@ -45,14 +35,20 @@ export function WalletPage() {
         balanceSUI={balanceSUI}
         balanceUSD={balanceUSD}
         address={account.address}
-        isPending={isBalancePending}
+        isPending={isLoading}
       />
 
-      <WalletStats totalSpent={totalSpent} />
+      <WalletStats 
+        totalSpent={totalSpent} 
+        totalReceived={totalReceived} 
+      />
 
       <WalletAssets tickets={tickets} />
 
-      <TransactionHistory tickets={tickets} />
+      <TransactionHistory 
+        tickets={tickets} 
+        totalReceived={totalReceived}
+      />
 
     </div>
   );

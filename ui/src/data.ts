@@ -66,26 +66,3 @@ export const EVENTS = [
     img: "/assets/conference.jpg" 
   }
 ];
-
-export const MY_TICKETS = [
-  { 
-    id: 101, 
-    title: "Broadway Night: The Musical", 
-    date: "Jun 30, 2025", 
-    loc: "Royal Theater", 
-    category: "Theater", 
-    status: "Valid", 
-    img: "/assets/theater.jpg",
-    tokenId: "0x123...abc"
-  },
-  { 
-    id: 102, 
-    title: "Tech Summit 2025", 
-    date: "Sep 12, 2025", 
-    loc: "Silicon Valley Center", 
-    category: "Conference", 
-    status: "Used", 
-    img: "/assets/conference.jpg",
-    tokenId: "0x456...def"
-  }
-];

@@ -1,7 +1,25 @@
-export function StatsGrid() {
+import { TicketNFT } from "../../hooks/useUserTickets";
+
+interface StatsGridProps {
+  tickets: TicketNFT[];
+}
+
+export function StatsGrid({ tickets }: StatsGridProps) {
+  
+  // 1. Calculate Total Purchased (Real Wallet Count)
+  const purchasedCount = tickets.length;
+
+  // 2. Calculate Attended (Logic: Look for "Used" status in metadata)
+  // Since standard NFTs might not have a status field, we check the description as a fallback.
+  // In a real dApp, you would check a specific field on the Smart Contract.
+  const attendedCount = tickets.filter(t => 
+    t.description?.toLowerCase().includes("used") || 
+    t.title.toLowerCase().includes("past")
+  ).length;
+
   const stats = [
-    { label: "Events Attended", val: 12 },
-    { label: "Tickets Purchased", val: 24 },
+    { label: "Events Attended", val: attendedCount },
+    { label: "Tickets Purchased", val: purchasedCount },
   ];
 
   return (
