@@ -1,4 +1,4 @@
-module nfpass::tickets {
+module suihackaton::tickets {
     use std::string::{Self, String};
     
     // Error codes for debugging
