@@ -17,17 +17,14 @@ export function WalletPage() {
     isLoading 
   } = useWalletData();
 
-  // 1. Show Warning if not connected
   if (!account) {
     return <WalletNotConnected />;
   }
 
-  // 2. Show Loading State (Optional, but good UX)
-  if (isLoading) {
+  if (isLoading || !tickets || tickets.length === 0) {
     return <div className="text-center py-20 text-gray-400">Loading wallet data...</div>;
   }
 
-  // 3. Show The Wallet Dashboard
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
       

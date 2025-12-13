@@ -3,11 +3,10 @@ import { EventCard } from "./EventCard";
 interface EventGridProps {
   events: any[];
   isLoading: boolean;
-  onBuy: (event: any) => void;
-  processingId: number | string | null;
+  onAdd: (event: any) => void;
 }
 
-export function EventGrid({ events, isLoading, onBuy, processingId }: EventGridProps) {
+export function EventGrid({ events, isLoading, onAdd }: EventGridProps) {
   if (isLoading) {
     return <div className="text-center py-20 text-gray-400">Loading events...</div>;
   }
@@ -26,8 +25,7 @@ export function EventGrid({ events, isLoading, onBuy, processingId }: EventGridP
         <EventCard 
           key={evt.id} 
           event={evt} 
-          onBuy={onBuy}
-          isProcessing={processingId === evt.id}
+          onAdd={onAdd}
         />
       ))}
     </div>

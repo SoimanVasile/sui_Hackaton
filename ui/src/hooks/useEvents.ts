@@ -1,12 +1,17 @@
-import { EVENTS } from "../data"; // Importing the dummy data from step 1
+import { useState, useEffect } from "react";
+import { EVENTS_DATA } from "../data/eventsData"; // Import from the shared file
 
 export function useEvents() {
-  // RIGHT NOW: We return static dummy data.
-  // FUTURE: We can use useSuiClientQuery here to fetch real events.
-  
-  return {
-    events: EVENTS,
-    isLoading: false,
-    error: null
-  };
+  const [events, setEvents] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setEvents(EVENTS_DATA); // Use the shared data
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  return { events, isLoading };
 }

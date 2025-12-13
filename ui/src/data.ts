@@ -4,7 +4,7 @@ export const EVENTS = [
     title: "Summer Music Festival 2025", 
     date: "Jul 15, 2025 at 18:00", 
     loc: "Main Stage Arena", 
-    price: 10, 
+    price: 0.01,
     category: "Music", 
     img: "/assets/festival.jpg" 
   },
@@ -13,7 +13,7 @@ export const EVENTS = [
     title: "Midnight Jazz Quartet", 
     date: "Sep 10, 2025 at 21:00", 
     loc: "Blue Note Lounge", 
-    price: 15, 
+    price: 0.02, 
     category: "Music", 
     img: "/assets/jazz.jpg" 
   },
@@ -22,7 +22,7 @@ export const EVENTS = [
     title: "Neon Nights Rave", 
     date: "Oct 31, 2025 at 23:00", 
     loc: "Underground Warehouse", 
-    price: 20, 
+    price: 0.015, 
     category: "Music", 
     img: "/assets/rave.jpg" 
   },
@@ -32,7 +32,7 @@ export const EVENTS = [
     title: "Championship Finals", 
     date: "Aug 20, 2025 at 19:30", 
     loc: "Metro Sports Stadium", 
-    price: 25, 
+    price: 0.03, 
     category: "Sports", 
     img: "/assets/sports.jpg" 
   },
@@ -41,7 +41,7 @@ export const EVENTS = [
     title: "Sunset Yoga & Wellness", 
     date: "Jun 05, 2025 at 07:00", 
     loc: "Central City Park", 
-    price: 5, 
+    price: 0.01, 
     category: "Sports", 
     img: "/assets/yoga.jpg" 
   },
@@ -51,7 +51,7 @@ export const EVENTS = [
     title: "Broadway Night: The Musical", 
     date: "Jun 30, 2025 at 20:00", 
     loc: "Royal Theater", 
-    price: 15, 
+    price: 0.1, 
     category: "Theater", 
     img: "/assets/theater.jpg" 
   },
@@ -61,7 +61,7 @@ export const EVENTS = [
     title: "Web3 Builders Summit", 
     date: "Dec 01, 2025 at 09:00", 
     loc: "Tech Hub Convention", 
-    price: 50, 
+    price: 0.09, 
     category: "Conference", 
     img: "/assets/conference.jpg" 
   }
