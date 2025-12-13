@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEvents } from "../hooks/useEvents.ts";
 import { useCampaigns } from "../hooks/useCampaigns"; 
 import { useLiveEvents } from "../hooks/useLiveEvents";
 import { useUserTickets } from "../hooks/useUserTickets";
@@ -86,12 +87,15 @@ export function EventsPage() {
     );
   };
 
+  // --- DATA MERGING ---
+  
   const formattedCampaigns = liveCampaigns.map(c => ({
     ...c, 
     category: "Charity", 
     date: `Goal: ${c.targetAmount} SUI`, 
     loc: `Raised: ${c.currentRaised} SUI`,
     
+    // ✅ FIX: Map 'imageUrl' from hook to 'img' for the Card component
     img: c.imageUrl, 
     
     isCampaign: true 
