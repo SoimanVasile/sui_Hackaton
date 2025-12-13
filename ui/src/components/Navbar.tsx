@@ -28,10 +28,12 @@ export function Navbar() {
         <Link to="/profile" className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${isActive("/profile")}`}>
           <User size={18} /> Profile
         </Link>
+        <Link to="/organizer" className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${isActive("/organizer")}`}>
+          <User size={18}/> Organizer
+        </Link>
       </div>
 
       <div className="flex items-center gap-4">
-        {/* CART BUTTON */}
         <button 
           onClick={() => setIsOpen(true)}
           className="p-2 text-gray-500 hover:text-brand-600 transition-colors relative"

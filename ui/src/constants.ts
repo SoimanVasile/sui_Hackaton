@@ -1,3 +1,3 @@
-export const PACKAGE_ID = "0xa93a7421ec45ba0982e26250cad1f46c4be908dd8a3235ed3c25a5069c530ac6"; 
+export const PACKAGE_ID = "0x89f0ccad447cad09ce600c893b6d1af68ae7990138631b353fd11b5290534d53"; 
 export const MODULE_NAME = "ticket_nft";
 export const FUNCTION_NAME = "buy_ticket";

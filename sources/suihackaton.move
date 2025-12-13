@@ -3,28 +3,85 @@ module suihackaton::charity {
     use sui::coin::{Self, Coin};
     use sui::sui::SUI;
     use sui::event;
+    use sui::url::{Self, Url};
+    use sui::transfer;
+    use sui::object::{Self, ID, UID};
+    use sui::tx_context::{Self, TxContext};
 
-    const NGO_ADDRESS: address = @0x15185806a896f6b6a9d9eb1c433bdc0b9817528e520f4000988d50658a5a27c7;
+    public struct Campaign has key, store {
+        id: UID,
+        admin: address,
+        name: String,
+        description: String,
+        target_amount: u64,
+        current_raised: u64,
+        image_url: String,
+        closed: bool
+    }
 
     public struct DonationNFT has key, store {
         id: UID,
+        campaign_id: ID,
         amount_donated: u64, 
         tier: String,
         image_url: String,
-        timestamp: u64
     }
 
-    public struct DonationEvent has copy, drop {
+    public struct CampaignCreated has copy, drop {
+        campaign_id: ID,
+        admin: address,
+        name: String
+    }
+
+    public struct DonationReceived has copy, drop {
+        campaign_id: ID,
         donor: address,
-        amount: u64
+        amount: u64,
+        new_total: u64
     }
 
-    public fun donate_for_cause(
+    public entry fun create_campaign(
+        name: vector<u8>,
+        description: vector<u8>,
+        target: u64,
+        image_url: vector<u8>,
+        ctx: &mut TxContext
+    ) {
+        let id = object::new(ctx);
+        let campaign_id = object::uid_to_inner(&id);
+        let sender = tx_context::sender(ctx);
+
+        let campaign = Campaign {
+            id,
+            admin: sender,
+            name: string::utf8(name),
+            description: string::utf8(description),
+            target_amount: target,
+            current_raised: 0,
+            image_url: string::utf8(image_url),
+            closed: false
+        };
+
+        transfer::share_object(campaign);
+
+        event::emit(CampaignCreated {
+            campaign_id,
+            admin: sender,
+            name: string::utf8(name)
+        });
+    }
+
+    public entry fun donate_to_campaign(
+        campaign: &mut Campaign, 
         payment: Coin<SUI>, 
         ctx: &mut TxContext
     ) {
+        assert!(campaign.closed == false, 0);
+
         let amount = coin::value(&payment);
         let sender = tx_context::sender(ctx);
+
+        campaign.current_raised = campaign.current_raised + amount;
 
         let tier_str = if (amount >= 100_000_000_000) { 
             b"Gold Philanthropist"
@@ -36,24 +93,30 @@ module suihackaton::charity {
 
         let nft = DonationNFT {
             id: object::new(ctx),
+            campaign_id: object::uid_to_inner(&campaign.id),
             amount_donated: amount,
             tier: string::utf8(tier_str),
-            image_url: string::utf8(b"https://nfpass.app/images/thank-you.png"),
-            timestamp: tx_context::epoch(ctx)
+            image_url: campaign.image_url, // Donors get the campaign badge
         };
 
-        transfer::public_transfer(payment, NGO_ADDRESS);
-
+        let admin_addr = campaign.admin;
+        transfer::public_transfer(payment, admin_addr);
         transfer::public_transfer(nft, sender);
 
-        event::emit(DonationEvent {
+        event::emit(DonationReceived {
+            campaign_id: object::uid_to_inner(&campaign.id),
             donor: sender,
-            amount: amount
+            amount,
+            new_total: campaign.current_raised
         });
     }
 }
+
 module suihackaton::volunteer {
     use std::string::{Self, String};
+    use sui::object::{Self, UID};
+    use sui::transfer;
+    use sui::tx_context::{Self, TxContext};
 
     public struct VolunteerBadge has key { 
         id: UID,
