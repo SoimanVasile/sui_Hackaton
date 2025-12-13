@@ -6,24 +6,26 @@ import { WalletPage } from "./pages/WalletPage";
 import { ProfilePage } from "./pages/ProfilePage";
 
 import { CartDrawer } from "./components/cart/CartDrawer";
+import CreatePage from "./components/create"; // <-- NEW: Import the CreatePage component
 
 function App() {
-  return (
-    <Router>
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-brand-100 selection:text-brand-900">
-        <Navbar />
-        
-        <CartDrawer />
+  return (
+    <Router>
+      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-brand-100 selection:text-brand-900">
+        <Navbar />
+        
+        <CartDrawer />
 
-        <Routes>
-          <Route path="/" element={<EventsPage />} />
-          <Route path="/tickets" element={<MyTicketsPage />} />
-          <Route path="/wallet" element={<WalletPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-        </Routes>
-      </div>
-    </Router>
-  );
+        <Routes>
+          <Route path="/" element={<EventsPage />} />
+          <Route path="/tickets" element={<MyTicketsPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/create" element={<CreatePage />} /> {/* <-- THIS MUST BE INSIDE <Routes> */}
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
 export default App;

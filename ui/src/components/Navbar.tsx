@@ -28,6 +28,9 @@ export function Navbar() {
         <Link to="/profile" className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${isActive("/profile")}`}>
           <User size={18} /> Profile
         </Link>
+        <Link to="/create" className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${isActive("/create")} bg-green-500 text-white hover:bg-green-600`}>
+          Create
+        </Link>
       </div>
 
       <div className="flex items-center gap-4">
