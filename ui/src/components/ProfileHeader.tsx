@@ -3,6 +3,7 @@ import { useCurrentAccount } from "@mysten/dapp-kit";
 import { ProfileBanner } from "./profile/ProfileBanner";
 import { ProfileInfo } from "./profile/ProfileInfo";
 
+
 export function ProfileHeader() {
   const account = useCurrentAccount();
   

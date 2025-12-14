@@ -1,5 +1,6 @@
 import { EventCard } from "./EventCard";
 
+
 interface EventGridProps {
   events: any[];
   isLoading: boolean;

@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
 
+
 interface EventFiltersProps {
   activeFilter: string;
   searchQuery: string;

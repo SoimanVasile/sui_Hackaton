@@ -1,5 +1,6 @@
 import { Calendar, MapPin, ShoppingCart } from "lucide-react";
 
+
 interface EventProps {
   event: {
     id: number | string;
