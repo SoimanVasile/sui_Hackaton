@@ -10,7 +10,6 @@ const ENotImplemented: u64 = 0;
 fun test_suihackaton() {
     // pass
 }
-
 #[test, expected_failure(abort_code = ::suihackaton::suihackaton_tests::ENotImplemented)]
 fun test_suihackaton_fail() {
     abort ENotImplemented

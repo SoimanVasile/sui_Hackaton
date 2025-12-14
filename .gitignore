@@ -1,9 +1,6 @@
-# --- Sui / Move Smart Contract ---
 build/
 .move/
-# We keep Move.lock so others have exact dependencies, but you can ignore it if you prefer.
 
-# --- Frontend (Node/React) ---
 node_modules/
 ui/node_modules/
 dist/
@@ -11,11 +8,9 @@ ui/dist/
 out/
 ui/out/
 
-# --- Environment Variables (Secrets) ---
 .env
 ui/.env
 
-# --- System Files ---
 .DS_Store
 Thumbs.db
 .idea/
