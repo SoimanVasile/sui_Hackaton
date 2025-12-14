@@ -91,7 +91,6 @@ module suihackaton::charity {
     ) {
         let amount = coin::value(&payment);
         let sender = tx_context::sender(ctx);
-
         campaign.current_raised = campaign.current_raised + amount;
         
         transfer::public_transfer(payment, campaign.organizer);
