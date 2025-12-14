@@ -1,6 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { CartItem } from "../../context/CartContext";
 
+
 interface CartItemRowProps {
   item: CartItem;
   onRemove: (id: string | number) => void;

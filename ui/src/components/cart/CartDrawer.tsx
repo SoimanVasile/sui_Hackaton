@@ -3,6 +3,7 @@ import { useCart } from "../../context/CartContext";
 import { CartItemRow } from "./CartItemRow";
 import { useCheckout } from "../../hooks/useCheckout";
 
+
 export function CartDrawer() {
   const { items, removeFromCart, clearCart, isOpen, setIsOpen, totalPrice } = useCart();
   
