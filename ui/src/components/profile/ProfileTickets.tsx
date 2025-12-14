@@ -2,6 +2,7 @@ import { Loader2, Ticket } from "lucide-react";
 import { TicketCard } from "../tickets/TicketCard";
 import { Item } from "../../hooks/useUserTickets";
 
+
 interface ProfileTicketsProps {
   tickets: Item[];
   isLoading: boolean;

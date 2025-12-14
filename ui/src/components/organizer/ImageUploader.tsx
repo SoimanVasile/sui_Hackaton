@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
 
+
 interface ImageUploaderProps {
   value: string;
   onChange: (base64: string) => void;

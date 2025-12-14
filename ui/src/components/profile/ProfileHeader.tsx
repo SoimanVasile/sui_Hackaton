@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { User, Edit2, Save, X, Camera } from "lucide-react";
 
+
 interface Profile {
   username: string;
   bio: string;

@@ -4,6 +4,7 @@ interface ProfileData {
   location: string;
 }
 
+
 interface ProfileInfoProps {
   isEditing: boolean;
   data: ProfileData;

@@ -1,5 +1,6 @@
 import { Camera } from "lucide-react";
 
+
 interface AvatarSectionProps {
   isEditing: boolean;
   avatar: string;

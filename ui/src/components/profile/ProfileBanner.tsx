@@ -1,6 +1,7 @@
 import { AvatarSection } from "./AvatarSection";
 import { ProfileActions } from "./ProfileActions";
 
+
 interface ProfileBannerProps {
   isEditing: boolean;
   avatar: string;

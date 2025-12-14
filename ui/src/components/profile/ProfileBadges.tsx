@@ -1,6 +1,7 @@
 import { Loader2, Medal } from "lucide-react";
 import { Item } from "../../hooks/useUserTickets";
 
+
 interface ProfileBadgesProps {
   badges: Item[];
   isLoading: boolean;
