@@ -1,4 +1,5 @@
 export const EVENTS = [
+
   { 
     id: 1, 
     title: "Summer Music Festival 2025", 
