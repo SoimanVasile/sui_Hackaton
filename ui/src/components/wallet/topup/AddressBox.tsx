@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Copy } from "lucide-react";
 
+
 interface AddressBoxProps {
   address: string;
 }

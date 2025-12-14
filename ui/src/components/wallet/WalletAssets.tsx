@@ -1,5 +1,6 @@
 import { Image, ExternalLink } from "lucide-react";
 
+
 interface WalletAssetsProps {
   tickets: any[];
 }

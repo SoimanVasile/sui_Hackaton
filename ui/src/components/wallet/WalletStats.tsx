@@ -1,5 +1,6 @@
 import { TrendingDown, TrendingUp } from "lucide-react";
 
+
 interface WalletStatsProps {
   totalSpent: number;
   totalReceived: number;

@@ -1,6 +1,7 @@
 import { TransactionItem } from "./TransactionItem";
 import { getRealPrice } from "../../data/eventsData";
 
+
 interface Ticket {
   id: string;
   title: string;

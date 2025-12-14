@@ -1,5 +1,6 @@
 import { ArrowUpRight, TrendingUp, CheckCircle2 } from "lucide-react";
 
+
 interface TransactionItemProps {
   type: "incoming" | "outgoing";
   title: string;

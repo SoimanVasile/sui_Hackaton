@@ -1,5 +1,6 @@
 import QRCode from "react-qr-code";
 
+
 interface QrSectionProps {
   address: string;
 }

@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
+
 export function FaucetLink() {
   const FAUCET_URL = "https://faucet.sui.io/";
 

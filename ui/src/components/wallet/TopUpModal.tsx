@@ -3,6 +3,7 @@ import { QrSection } from "./topup/QrSection";
 import { AddressBox } from "./topup/AddressBox";
 import { FaucetLink } from "./topup/FaucetLink";
 
+
 interface TopUpModalProps {
   address: string;
   onClose: () => void;
