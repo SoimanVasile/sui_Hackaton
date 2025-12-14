@@ -8,6 +8,8 @@ module suihackaton::ticket_nft {
     use sui::coin::{Self, Coin};
     use sui::sui::SUI;
 
+    // --- STRUCTS ---
+
     public struct Event has key, store {
         id: UID,
         organizer: address,
@@ -24,8 +26,10 @@ module suihackaton::ticket_nft {
         name: String,
         description: String,
         url: Url,
+        is_used: bool, // ✅ NEW: Tracks if ticket was used
     }
 
+    // --- EVENTS ---
     public struct EventCreated has copy, drop {
         event_id: ID,
         organizer: address,
@@ -37,6 +41,14 @@ module suihackaton::ticket_nft {
         event_id: ID,
         buyer: address
     }
+
+    public struct TicketValidated has copy, drop { // ✅ NEW EVENT
+        ticket_id: ID,
+        event_id: ID,
+        validator: address
+    }
+
+    // --- FUNCTIONS ---
 
     public entry fun create_event(
         name: vector<u8>,
@@ -89,6 +101,7 @@ module suihackaton::ticket_nft {
             name: event_obj.name,
             description: event_obj.description,
             url: url::new_unsafe_from_bytes(*string::bytes(&event_obj.image_url)),
+            is_used: false, // ✅ Initialize as unused
         };
 
         let ticket_id = object::uid_to_inner(&ticket.id);
@@ -100,5 +113,32 @@ module suihackaton::ticket_nft {
         });
 
         transfer::public_transfer(ticket, sender);
+    }
+
+    // ✅ NEW: Validate Ticket (Mark as Used)
+    public entry fun validate_ticket(
+        ticket: &mut Ticket,
+        event_obj: &Event,
+        ctx: &mut TxContext
+    ) {
+        let sender = tx_context::sender(ctx);
+
+        // 1. Only the organizer can validate
+        assert!(sender == event_obj.organizer, 101);
+        
+        // 2. Ticket must belong to this event
+        assert!(ticket.event_id == object::id(event_obj), 102);
+
+        // 3. Ticket must not be used yet
+        assert!(ticket.is_used == false, 103);
+
+        // Mark as used
+        ticket.is_used = true;
+
+        event::emit(TicketValidated {
+            ticket_id: object::id(ticket),
+            event_id: ticket.event_id,
+            validator: sender
+        });
     }
 }

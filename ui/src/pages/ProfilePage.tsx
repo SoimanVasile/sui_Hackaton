@@ -1,6 +1,7 @@
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useUserTickets } from "../hooks/useUserTickets";
 import { Loader2, Ticket, Medal } from "lucide-react";
+import { TicketCard } from "../components/tickets/TicketCard"; // ✅ Import the card
 
 export function ProfilePage() {
   const account = useCurrentAccount();
@@ -30,6 +31,7 @@ export function ProfilePage() {
 
       <div className="space-y-10">
         
+        {/* Badges Section */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             <Medal className="text-yellow-500" /> Donation Badges
@@ -46,36 +48,31 @@ export function ProfilePage() {
                      <h3 className="font-bold text-lg leading-tight">Charity Supporter</h3>
                      <p className="text-sm font-medium mt-1">Donated: {badge.amount} SUI</p>
                    </div>
-                   <div className="absolute -top-10 -right-10 w-20 h-20 bg-white opacity-20 rotate-45 transform"></div>
                  </div>
                ))}
                {tickets.filter(t => t.type === "Badge").length === 0 && (
-                 <p className="text-gray-400 italic">No badges yet. Donate to a campaign to earn one!</p>
+                 <p className="text-gray-400 italic">No badges yet.</p>
                )}
              </div>
           )}
         </div>
 
+        {/* Tickets Section */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             <Ticket className="text-brand-600" /> Event Tickets
           </h2>
-          <div className="grid gap-4">
+          
+          <div className="grid gap-6">
+            {/* ✅ FIX: Use TicketCard here instead of the old div */}
             {tickets.filter(t => t.type === "Ticket").map((ticket) => (
-              <div key={ticket.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4">
-                <img src={ticket.image} alt={ticket.name} className="w-24 h-24 rounded-lg object-cover bg-gray-100" />
-                <div>
-                  <h3 className="font-bold text-lg">{ticket.name}</h3>
-                  <p className="text-sm text-gray-500">{ticket.description}</p>
-                  <span className="inline-block mt-2 bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-bold">
-                    Valid Ticket
-                  </span>
-                </div>
-              </div>
+              // @ts-ignore
+              <TicketCard key={ticket.id} ticket={ticket} />
             ))}
-             {tickets.filter(t => t.type === "Ticket").length === 0 && !isLoading && (
+            
+            {tickets.filter(t => t.type === "Ticket").length === 0 && !isLoading && (
                  <p className="text-gray-400 italic">No tickets found.</p>
-             )}
+            )}
           </div>
         </div>
 
