@@ -9,7 +9,6 @@ export function ProfilePage() {
   const account = useCurrentAccount();
   const { tickets, isLoading } = useUserTickets();
 
-  // Profile State
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     username: "Unnamed User",
@@ -17,7 +16,6 @@ export function ProfilePage() {
     avatarUrl: ""
   });
 
-  // Load from Local Storage
   useEffect(() => {
     if (account?.address) {
       const savedProfile = localStorage.getItem(`user_profile_${account.address}`);
@@ -27,7 +25,6 @@ export function ProfilePage() {
     }
   }, [account]);
 
-  // Save to Local Storage
   const handleSave = () => {
     if (account?.address) {
       localStorage.setItem(`user_profile_${account.address}`, JSON.stringify(profile));
@@ -37,7 +34,6 @@ export function ProfilePage() {
 
   if (!account) return <div className="text-center py-20">Please connect wallet.</div>;
 
-  // Filter Data
   const badges = tickets.filter(t => t.type === "Badge");
   const eventTickets = tickets.filter(t => t.type === "Ticket");
 

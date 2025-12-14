@@ -16,7 +16,6 @@ export function ProfileTickets({ tickets, isLoading }: ProfileTicketsProps) {
       
       <div className="grid gap-6">
         {tickets.map((ticket) => (
-          // @ts-ignore
           <TicketCard key={ticket.id} ticket={ticket} />
         ))}
         

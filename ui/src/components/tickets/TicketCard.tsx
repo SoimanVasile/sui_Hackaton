@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Calendar, MapPin, QrCode, Send, Info, X } from "lucide-react";
-import QRCode from "react-qr-code"; // ✅ 1. Import QR Library
+import QRCode from "react-qr-code";
 import { TransferModal } from "./TransferModal";
 
 interface TicketProps {
@@ -12,16 +12,15 @@ interface TicketProps {
     loc?: string;
     category?: string;
     status?: string;
-    image: string; // Renamed from 'img' to match your hook data
-    name?: string; // Sometimes data comes as name vs title
+    image: string;
+    name?: string;
   };
 }
 
 export function TicketCard({ ticket }: TicketProps) {
   const [isTransferOpen, setIsTransferOpen] = useState(false);
-  const [isQrOpen, setIsQrOpen] = useState(false); // ✅ 2. State for QR Modal
+  const [isQrOpen, setIsQrOpen] = useState(false);
 
-  // Handle data inconsistencies (hooks vs static data)
   const displayTitle = ticket.title || ticket.name || "Untitled Ticket";
   const displayImg = ticket.image || "https://via.placeholder.com/400";
 
@@ -29,7 +28,6 @@ export function TicketCard({ ticket }: TicketProps) {
     <>
       <div className="bg-white rounded-3xl border border-gray-100 shadow-card overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col md:flex-row">
         
-        {/* Image Section */}
         <div className="w-full md:w-1/3 relative overflow-hidden h-56 md:h-auto bg-gray-100">
           <img 
             src={displayImg.replace("ipfs://", "https://ipfs.io/ipfs/")} 
@@ -42,7 +40,6 @@ export function TicketCard({ ticket }: TicketProps) {
           </div>
         </div>
 
-        {/* Info Section */}
         <div className="flex-1 p-6 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start mb-3">
@@ -62,7 +59,6 @@ export function TicketCard({ ticket }: TicketProps) {
           </div>
 
           <div className="flex gap-3 border-t border-gray-50 pt-4">
-            {/* ✅ 3. Button to Open QR */}
             <button 
               onClick={() => setIsQrOpen(true)}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors shadow-lg shadow-brand-200 active:scale-95"
@@ -77,7 +73,6 @@ export function TicketCard({ ticket }: TicketProps) {
         </div>
       </div>
 
-      {/* ✅ 4. The QR Code Modal */}
       {isQrOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center relative animate-in fade-in zoom-in duration-200">
@@ -90,7 +85,7 @@ export function TicketCard({ ticket }: TicketProps) {
             
             <div className="bg-white p-4 rounded-xl border-2 border-brand-100 inline-block mb-4">
               <QRCode 
-                value={ticket.id} // Encodes the Ticket Object ID
+                value={ticket.id}
                 size={200}
                 viewBox={`0 0 256 256`}
               />

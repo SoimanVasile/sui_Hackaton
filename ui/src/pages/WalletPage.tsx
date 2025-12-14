@@ -1,6 +1,7 @@
 import { useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
-import { Wallet, Coins, CreditCard, Loader2, ExternalLink } from "lucide-react";
+import { CreditCard, Loader2, ExternalLink, Wallet } from "lucide-react";
 import { useUserTickets } from "../hooks/useUserTickets";
+import { WalletCard } from "../components/wallet/WalletCard"; 
 
 export function WalletPage() {
   const account = useCurrentAccount();
@@ -13,9 +14,11 @@ export function WalletPage() {
 
   const { tickets, isLoading: isAssetsLoading } = useUserTickets();
 
-  const balance = balanceData 
-    ? (Number(balanceData.totalBalance) / 1_000_000_000).toFixed(4) 
-    : "0.0000";
+  const balanceSUI = balanceData 
+    ? Number(balanceData.totalBalance) / 1_000_000_000 
+    : 0;
+
+  const balanceUSD = (balanceSUI * 1.5).toFixed(2); 
 
   if (!account) {
     return (
@@ -35,29 +38,14 @@ export function WalletPage() {
     <div className="max-w-4xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">My Wallet</h1>
 
-      <div className="bg-gradient-to-br from-brand-900 to-gray-900 text-white rounded-3xl p-8 shadow-xl mb-10 relative overflow-hidden">
-        <div className="relative z-10">
-          <p className="text-gray-400 font-medium flex items-center gap-2 mb-2">
-            <Coins size={18} /> Total Balance
-          </p>
-          <div className="text-5xl font-bold tracking-tight mb-4">
-            {isBalanceLoading ? (
-              <Loader2 className="animate-spin" /> 
-            ) : (
-              `${balance} SUI`
-            )}
-          </div>
-          <div className="bg-white/10 inline-block px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10 text-sm font-mono break-all">
-            {account.address}
-          </div>
-        </div>
-        
-        <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-10 translate-y-10">
-          <CreditCard size={200} />
-        </div>
-      </div>
+      <WalletCard 
+        balanceSUI={balanceSUI}
+        balanceUSD={balanceUSD}
+        address={account.address}
+        isPending={isBalanceLoading}
+      />
 
-      <div>
+      <div className="mt-10">
         <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
           <CreditCard className="text-brand-600" /> Digital Assets
         </h2>
@@ -71,7 +59,7 @@ export function WalletPage() {
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
             {tickets.map((item) => (
-              <div key={item.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex gap-5 hover:shadow-md transition-shadow">
+              <div key={item.id} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex gap-5 hover:shadow-md transition-shadow relative overflow-hidden">
                 <div className="w-20 h-20 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
@@ -88,14 +76,21 @@ export function WalletPage() {
                   </div>
                   <p className="text-sm text-gray-500 mt-1 line-clamp-1">{item.description}</p>
                   
-                  <a 
-                    href={`https://suiscan.xyz/testnet/object/${item.id}`} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="text-xs text-brand-500 hover:text-brand-700 flex items-center gap-1 mt-3"
-                  >
-                    View on Explorer <ExternalLink size={10} />
-                  </a>
+                  <div className="flex items-center gap-4 mt-3">
+                    <a 
+                        href={`https://suiscan.xyz/testnet/object/${item.id}`} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="text-xs text-brand-500 hover:text-brand-700 flex items-center gap-1"
+                    >
+                        View on Explorer <ExternalLink size={10} />
+                    </a>
+                    {item.isUsed && (
+                        <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100">
+                            USED
+                        </span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

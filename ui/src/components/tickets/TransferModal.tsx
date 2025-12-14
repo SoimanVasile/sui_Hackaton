@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X, Send, Loader2 } from "lucide-react";
 import { Transaction } from "@mysten/sui/transactions";
 import { useSignAndExecuteTransaction } from "@mysten/dapp-kit";
-import { PACKAGE_ID } from "../../constants"; // Import ID
+import { PACKAGE_ID } from "../../constants";
 
 interface TransferModalProps {
   ticketId: string;
@@ -21,7 +21,6 @@ export function TransferModal({ ticketId, ticketTitle, onClose }: TransferModalP
 
     const tx = new Transaction();
 
-    // ✅ MODIFICARE: Folosim funcția custom 'transfer_ticket'
     tx.moveCall({
       target: `${PACKAGE_ID}::ticket_nft::transfer_ticket`,
       arguments: [
@@ -37,7 +36,7 @@ export function TransferModal({ ticketId, ticketTitle, onClose }: TransferModalP
           alert("Transfer Successful!");
           setIsLoading(false);
           onClose();
-          window.location.reload(); // Refresh pentru a actualiza lista
+          window.location.reload();
         },
         onError: (e) => {
           console.error(e);

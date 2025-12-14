@@ -20,14 +20,11 @@ export function ProfileHeader({
   accountAddress, profile, setProfile, isEditing, setIsEditing, onSave 
 }: ProfileHeaderProps) {
   
-  // Ref to trigger the hidden file input
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle File Upload (Convert to Base64)
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Optional: Check file size (limit to ~2MB to respect LocalStorage limits)
       if (file.size > 2 * 1024 * 1024) {
         alert("Image is too large! Please choose an image under 2MB.");
         return;
@@ -35,7 +32,6 @@ export function ProfileHeader({
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Save the Base64 string to the profile state
         setProfile({ ...profile, avatarUrl: reader.result as string });
       };
       reader.readAsDataURL(file);
@@ -45,7 +41,6 @@ export function ProfileHeader({
   return (
     <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8 relative group">
       
-      {/* Edit / Save Actions */}
       {!isEditing ? (
         <button 
           onClick={() => setIsEditing(true)}
@@ -73,7 +68,6 @@ export function ProfileHeader({
 
       <div className="flex flex-col md:flex-row items-center gap-8">
         
-        {/* Avatar Section */}
         <div className="relative flex flex-col items-center">
           <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center relative">
             {profile.avatarUrl ? (
@@ -84,7 +78,6 @@ export function ProfileHeader({
               </div>
             )}
 
-            {/* Overlay for Upload (Only in Edit Mode) */}
             {isEditing && (
               <div 
                 className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors backdrop-blur-[1px]"
@@ -96,7 +89,6 @@ export function ProfileHeader({
             )}
           </div>
 
-          {/* Hidden File Input */}
           <input 
             type="file" 
             ref={fileInputRef}

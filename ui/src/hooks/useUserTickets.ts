@@ -20,7 +20,6 @@ export function useUserTickets() {
   const [tickets, setTickets] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. Luăm Badge-urile (Acestea au rămas Owned Objects în charity module)
   const { data: ownedData, isLoading: isOwnedLoading } = useSuiClientQuery(
     "getOwnedObjects",
     {
@@ -31,26 +30,21 @@ export function useUserTickets() {
     { enabled: !!account }
   );
 
-  // 2. Luăm Biletele (Shared Objects)
   useEffect(() => {
     const fetchSharedTickets = async () => {
       if (!account) return;
       setIsLoading(true);
 
       try {
-        // A. Căutăm toate biletele create vreodată (TicketMinted)
-        // Într-o aplicație reală, ai folosi un Indexer API, dar pentru hackathon merge queryEvents
         const events = await client.queryEvents({
             query: { MoveModule: { package: PACKAGE_ID, module: "ticket_nft" } },
-            limit: 50, // Poți mări limita
+            limit: 50,
             order: "descending"
         });
 
         const ticketIds = new Set<string>();
 
-        // Filtrăm evenimentele relevante
         events.data.forEach((e) => {
-             // @ts-ignore
              if (e.type.includes("TicketMinted")) ticketIds.add(e.parsedJson.ticket_id);
         });
 
@@ -60,20 +54,16 @@ export function useUserTickets() {
             return;
         }
 
-        // B. Luăm detaliile obiectelor
         const objects = await client.multiGetObjects({
             ids: Array.from(ticketIds),
             options: { showContent: true }
         });
 
-        // C. Filtrăm doar biletele unde 'owner' == account.address
         const mySharedTickets = objects
             .map(obj => {
-                // @ts-ignore
                 const fields = obj.data?.content?.fields;
                 if (!fields) return null;
                 
-                // Verificăm dacă eu sunt proprietarul din câmpul 'owner'
                 if (fields.owner !== account.address) return null;
 
                 return {
@@ -99,9 +89,7 @@ export function useUserTickets() {
     fetchSharedTickets();
   }, [account, client]);
 
-  // 3. Combinăm Badge-urile (Owned) cu Biletele (Shared)
   const badges: Item[] = ownedData?.data?.map(obj => {
-      // @ts-ignore
       const fields = obj.data?.content?.fields;
       const amountSui = Number(fields.amount_donated) / 1_000_000_000;
       let tier = "Bronze Helper";

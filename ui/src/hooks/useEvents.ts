@@ -21,7 +21,6 @@ export function useEvents() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // 1. Listen for "EventCreated" events emitted by your contract
         const eventsQuery = await client.queryEvents({
             query: {
                 MoveModule: { 
@@ -31,33 +30,28 @@ export function useEvents() {
             }
         });
 
-        // 2. Filter for the specific event type
         const createdEvents = eventsQuery.data.filter(e => e.type.includes("::EventCreated"));
         
-        // 3. Get the Object IDs from the events
-        // @ts-ignore
         const objectIds = createdEvents.map(e => (e.parsedJson as any).event_id);
 
         if (objectIds.length > 0) {
-            // 4. Fetch the actual Event Objects to get details (image, price, etc)
             const objects = await client.multiGetObjects({
                 ids: objectIds,
                 options: { showContent: true }
             });
 
             const parsedEvents = objects.map((obj) => {
-                // @ts-ignore
                 const fields = obj.data?.content?.fields;
                 if (!fields) return null;
 
                 return {
                     id: obj.data?.objectId || "",
-                    title: fields.name, // The contract uses 'name'
+                    title: fields.name,
                     description: fields.description,
                     location: fields.location,
-                    price: Number(fields.price) / 1_000_000_000, // Convert MIST to SUI
+                    price: Number(fields.price) / 1_000_000_000,
                     img: fields.image_url,
-                    category: "Music/Arts", // You can add a category field to your contract later if needed
+                    category: "Music/Arts",
                     date: "Coming Soon" 
                 };
             }).filter((e): e is Event => e !== null);

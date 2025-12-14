@@ -8,7 +8,7 @@ import { EventGrid } from "../components/events/EventGrid";
 import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
 import { PACKAGE_ID } from "../constants";
-import { useCart } from "../context/CartContext"; // ✅ 1. Import useCart
+import { useCart } from "../context/CartContext";
 
 export function EventsPage() {
   const { events: staticEvents, isLoading: isStaticLoading } = useEvents();
@@ -18,14 +18,12 @@ export function EventsPage() {
 
   const account = useCurrentAccount();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
-  const { addToCart } = useCart(); // ✅ 2. Get addToCart function
+  const { addToCart } = useCart();
 
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleAction = (event: any) => {
-    // We allow adding to cart even without wallet connected (optional)
-    // or you can keep the check: if (!account) return alert("Please connect wallet.");
 
     if (event.isCampaign) {
       handleDonate(event);
@@ -34,7 +32,6 @@ export function EventsPage() {
     }
   };
 
-  // ✅ 3. MODIFIED: Add to Cart instead of buying instantly
   const handleBuyTicket = (event: any) => {
     addToCart({
       id: event.id,
@@ -44,11 +41,8 @@ export function EventsPage() {
       category: event.category,
       quantity: 1
     });
-    // Optional: Add a toast notification here
-    // alert(`${event.title} added to cart!`); 
   };
 
-  // Note: Donations remain instant because they require a custom amount input
   const handleDonate = (campaign: any) => {
     if (!account) return alert("Please connect wallet to donate.");
 
@@ -91,8 +85,6 @@ export function EventsPage() {
     );
   };
 
-  // --- DATA MERGING ---
-  
   const formattedCampaigns = liveCampaigns.map(c => ({
     ...c, 
     category: "Charity", 

@@ -3,7 +3,6 @@ import { TicketNFT } from "../../hooks/useUserTickets";
 interface StatsGridProps {
   tickets: TicketNFT[];
 }
-
 export function StatsGrid({ tickets }: StatsGridProps) {
   
   const purchasedCount = tickets.length;

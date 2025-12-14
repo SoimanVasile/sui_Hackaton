@@ -18,13 +18,11 @@ export function ValidatorPage() {
     setStatus('scanning');
 
     try {
-        // 1. Verificăm mai întâi starea biletului pe blockchain
         const object = await client.getObject({
             id: ticketId,
             options: { showContent: true }
         });
 
-        // @ts-ignore
         const isAlreadyUsed = object.data?.content?.fields?.is_used;
 
         if (isAlreadyUsed) {
@@ -32,7 +30,6 @@ export function ValidatorPage() {
             return;
         }
 
-        // 2. Dacă nu e folosit, trimitem tranzacția
         const tx = new Transaction();
         tx.moveCall({
           target: `${PACKAGE_ID}::ticket_nft::validate_ticket`,
