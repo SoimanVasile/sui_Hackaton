@@ -10,6 +10,7 @@ export interface Item {
   campaignId?: string;
   amount?: number;
   tier?: string;
+  isUsed?: boolean; // ✅ Adăugăm acest câmp
 }
 
 export function useUserTickets() {
@@ -29,10 +30,12 @@ export function useUserTickets() {
   const items: Item[] = data.data
     .map((obj) => {
       const type = obj.data?.type;
+      // @ts-ignore
       const fields = obj.data?.content?.fields;
 
       if (!type || !fields) return null;
 
+      // 1. Logică pentru Bilete
       if (type.includes(`${PACKAGE_ID}::ticket_nft::Ticket`)) {
         return {
           id: obj.data?.objectId || "",
@@ -40,18 +43,17 @@ export function useUserTickets() {
           description: fields.description,
           image: fields.url || "https://placehold.co/100",
           type: "Ticket",
+          isUsed: fields.is_used, // ✅ AICI CITIM STAREA DIN BLOCKCHAIN
         };
       }
 
+      // 2. Logică pentru Badge-uri
       if (type.includes(`${PACKAGE_ID}::charity::Badge`)) {
         const amountSui = Number(fields.amount_donated) / 1_000_000_000;
         
         let tier = "Bronze Helper";
-        if (amountSui >= 0.4) {
-            tier = "Gold Philanthropist";
-        } else if (amountSui >= 0.1) {
-            tier = "Silver Supporter";
-        }
+        if (amountSui >= 0.4) tier = "Gold Philanthropist";
+        else if (amountSui >= 0.1) tier = "Silver Supporter";
 
         return {
           id: obj.data?.objectId || "",
