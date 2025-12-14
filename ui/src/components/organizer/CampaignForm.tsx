@@ -8,7 +8,6 @@ export function CampaignForm({ name, setName, target, setTarget, desc, setDesc }
   return (
     <>
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Nume Campanie */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-gray-700">Nume Campanie</label>
           <input 
@@ -20,7 +19,6 @@ export function CampaignForm({ name, setName, target, setTarget, desc, setDesc }
           />
         </div>
 
-        {/* Țintă Sumă */}
         <div className="space-y-2">
           <label className="text-sm font-bold text-gray-700">Țintă Strângere (SUI)</label>
           <div className="relative">
@@ -36,7 +34,6 @@ export function CampaignForm({ name, setName, target, setTarget, desc, setDesc }
         </div>
       </div>
 
-      {/* Descriere */}
       <div className="space-y-2">
         <label className="text-sm font-bold text-gray-700">Descriere</label>
         <textarea 

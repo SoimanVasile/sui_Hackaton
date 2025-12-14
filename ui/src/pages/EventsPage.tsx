@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { useEvents } from "../hooks/useEvents.ts";
+import { useEvents } from "../hooks/useEvents";
 import { useCampaigns } from "../hooks/useCampaigns"; 
 import { useLiveEvents } from "../hooks/useLiveEvents";
 import { useUserTickets } from "../hooks/useUserTickets";
 import { EventFilters } from "../components/events/EventFilters";
 import { EventGrid } from "../components/events/EventGrid";
+import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
-import { useSignAndExecuteTransaction, useCurrentAccount } from "@mysten/dapp-kit";
 import { PACKAGE_ID } from "../constants";
+import { useCart } from "../context/CartContext"; // ✅ 1. Import useCart
 
 export function EventsPage() {
   const { events: staticEvents, isLoading: isStaticLoading } = useEvents();
@@ -17,12 +18,14 @@ export function EventsPage() {
 
   const account = useCurrentAccount();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { addToCart } = useCart(); // ✅ 2. Get addToCart function
 
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleAction = (event: any) => {
-    if (!account) return alert("Please connect wallet.");
+    // We allow adding to cart even without wallet connected (optional)
+    // or you can keep the check: if (!account) return alert("Please connect wallet.");
 
     if (event.isCampaign) {
       handleDonate(event);
@@ -31,23 +34,24 @@ export function EventsPage() {
     }
   };
 
+  // ✅ 3. MODIFIED: Add to Cart instead of buying instantly
   const handleBuyTicket = (event: any) => {
-    const priceInMist = BigInt(Math.floor(event.price * 1_000_000_000));
-    const tx = new Transaction();
-    const [paymentCoin] = tx.splitCoins(tx.gas, [tx.pure.u64(priceInMist)]);
-    
-    tx.moveCall({
-      target: `${PACKAGE_ID}::ticket_nft::buy_ticket`,
-      arguments: [tx.object(event.id), paymentCoin],
+    addToCart({
+      id: event.id,
+      title: event.title,
+      price: event.price,
+      img: event.img,
+      category: event.category,
+      quantity: 1
     });
-
-    signAndExecute({ transaction: tx }, {
-        onSuccess: () => alert("Ticket bought!"),
-        onError: (e) => { console.error(e); alert("Failed."); }
-    });
+    // Optional: Add a toast notification here
+    // alert(`${event.title} added to cart!`); 
   };
 
+  // Note: Donations remain instant because they require a custom amount input
   const handleDonate = (campaign: any) => {
+    if (!account) return alert("Please connect wallet to donate.");
+
     const amountStr = prompt(`Donate to ${campaign.title}? (SUI)`);
     if (!amountStr || isNaN(Number(amountStr)) || Number(amountStr) <= 0) return;
 
@@ -94,10 +98,7 @@ export function EventsPage() {
     category: "Charity", 
     date: `Goal: ${c.targetAmount} SUI`, 
     loc: `Raised: ${c.currentRaised} SUI`,
-    
-    // ✅ FIX: Map 'imageUrl' from hook to 'img' for the Card component
     img: c.imageUrl, 
-    
     isCampaign: true 
   }));
 

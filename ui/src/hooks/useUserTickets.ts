@@ -9,6 +9,7 @@ export interface Item {
   type: "Ticket" | "Badge";
   campaignId?: string;
   amount?: number;
+  tier?: string;
 }
 
 export function useUserTickets() {
@@ -46,8 +47,11 @@ export function useUserTickets() {
         const amountSui = Number(fields.amount_donated) / 1_000_000_000;
         
         let tier = "Bronze Helper";
-        if (amountSui >= 100) tier = "Gold Philanthropist";
-        else if (amountSui >= 10) tier = "Silver Supporter";
+        if (amountSui >= 0.4) {
+            tier = "Gold Philanthropist";
+        } else if (amountSui >= 0.1) {
+            tier = "Silver Supporter";
+        }
 
         return {
           id: obj.data?.objectId || "",
@@ -57,6 +61,7 @@ export function useUserTickets() {
           type: "Badge",
           amount: amountSui,
           campaignId: fields.campaign_id,
+          tier: tier,
         };
       }
 

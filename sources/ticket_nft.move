@@ -8,8 +8,6 @@ module suihackaton::ticket_nft {
     use sui::coin::{Self, Coin};
     use sui::sui::SUI;
 
-    // --- STRUCTS ---
-
     public struct Event has key, store {
         id: UID,
         organizer: address,
@@ -26,10 +24,9 @@ module suihackaton::ticket_nft {
         name: String,
         description: String,
         url: Url,
-        is_used: bool, // ✅ NEW: Tracks if ticket was used
+        is_used: bool,
     }
 
-    // --- EVENTS ---
     public struct EventCreated has copy, drop {
         event_id: ID,
         organizer: address,
@@ -42,13 +39,11 @@ module suihackaton::ticket_nft {
         buyer: address
     }
 
-    public struct TicketValidated has copy, drop { // ✅ NEW EVENT
+    public struct TicketValidated has copy, drop {
         ticket_id: ID,
         event_id: ID,
         validator: address
     }
-
-    // --- FUNCTIONS ---
 
     public entry fun create_event(
         name: vector<u8>,
@@ -115,7 +110,6 @@ module suihackaton::ticket_nft {
         transfer::public_transfer(ticket, sender);
     }
 
-    // ✅ NEW: Validate Ticket (Mark as Used)
     public entry fun validate_ticket(
         ticket: &mut Ticket,
         event_obj: &Event,
@@ -123,16 +117,12 @@ module suihackaton::ticket_nft {
     ) {
         let sender = tx_context::sender(ctx);
 
-        // 1. Only the organizer can validate
         assert!(sender == event_obj.organizer, 101);
         
-        // 2. Ticket must belong to this event
         assert!(ticket.event_id == object::id(event_obj), 102);
 
-        // 3. Ticket must not be used yet
         assert!(ticket.is_used == false, 103);
 
-        // Mark as used
         ticket.is_used = true;
 
         event::emit(TicketValidated {
