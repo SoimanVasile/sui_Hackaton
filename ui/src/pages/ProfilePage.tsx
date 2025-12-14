@@ -1,82 +1,63 @@
+import { useState, useEffect } from "react";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useUserTickets } from "../hooks/useUserTickets";
-import { Loader2, Ticket, Medal } from "lucide-react";
-import { TicketCard } from "../components/tickets/TicketCard"; // ✅ Import the card
+import { ProfileHeader } from "../components/profile/ProfileHeader";
+import { ProfileBadges } from "../components/profile/ProfileBadges";
+import { ProfileTickets } from "../components/profile/ProfileTickets";
 
 export function ProfilePage() {
   const account = useCurrentAccount();
   const { tickets, isLoading } = useUserTickets();
 
-  const getBadgeStyle = (tier: string = "") => {
-    if (tier.includes("Gold")) return "bg-yellow-50 border-yellow-200 text-yellow-800 ring-yellow-100";
-    if (tier.includes("Silver")) return "bg-slate-50 border-slate-200 text-slate-800 ring-slate-100";
-    return "bg-orange-50 border-orange-200 text-orange-800 ring-orange-100";
+  // Profile State
+  const [isEditing, setIsEditing] = useState(false);
+  const [profile, setProfile] = useState({
+    username: "Unnamed User",
+    bio: "New to the Sui ecosystem!",
+    avatarUrl: ""
+  });
+
+  // Load from Local Storage
+  useEffect(() => {
+    if (account?.address) {
+      const savedProfile = localStorage.getItem(`user_profile_${account.address}`);
+      if (savedProfile) {
+        setProfile(JSON.parse(savedProfile));
+      }
+    }
+  }, [account]);
+
+  // Save to Local Storage
+  const handleSave = () => {
+    if (account?.address) {
+      localStorage.setItem(`user_profile_${account.address}`, JSON.stringify(profile));
+      setIsEditing(false);
+    }
   };
 
   if (!account) return <div className="text-center py-20">Please connect wallet.</div>;
 
+  // Filter Data
+  const badges = tickets.filter(t => t.type === "Badge");
+  const eventTickets = tickets.filter(t => t.type === "Ticket");
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8 flex items-center gap-6">
-        <div className="w-20 h-20 bg-gradient-to-br from-brand-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-          W
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-          <p className="font-mono text-gray-500 bg-gray-50 px-3 py-1 mt-2 rounded border inline-block break-all">
-            {account.address}
-          </p>
-        </div>
-      </div>
+      
+      <ProfileHeader 
+        accountAddress={account.address}
+        profile={profile}
+        setProfile={setProfile}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        onSave={handleSave}
+      />
 
       <div className="space-y-10">
-        
-        {/* Badges Section */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Medal className="text-yellow-500" /> Donation Badges
-          </h2>
-          {isLoading ? <Loader2 className="animate-spin" /> : (
-             <div className="grid md:grid-cols-2 gap-4">
-               {tickets.filter(t => t.type === "Badge").map((badge) => (
-                 <div key={badge.id} className={`p-4 rounded-xl border-2 flex gap-4 items-center shadow-sm relative overflow-hidden ${getBadgeStyle(badge.tier)}`}>
-                   <img src={badge.image} alt="Badge" className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md bg-white" />
-                   <div>
-                     <span className="text-xs font-bold uppercase tracking-wider opacity-70">
-                       {badge.tier || "Supporter"}
-                     </span>
-                     <h3 className="font-bold text-lg leading-tight">Charity Supporter</h3>
-                     <p className="text-sm font-medium mt-1">Donated: {badge.amount} SUI</p>
-                   </div>
-                 </div>
-               ))}
-               {tickets.filter(t => t.type === "Badge").length === 0 && (
-                 <p className="text-gray-400 italic">No badges yet.</p>
-               )}
-             </div>
-          )}
-        </div>
-
-        {/* Tickets Section */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Ticket className="text-brand-600" /> Event Tickets
-          </h2>
-          
-          <div className="grid gap-6">
-            {/* ✅ FIX: Use TicketCard here instead of the old div */}
-            {tickets.filter(t => t.type === "Ticket").map((ticket) => (
-              // @ts-ignore
-              <TicketCard key={ticket.id} ticket={ticket} />
-            ))}
-            
-            {tickets.filter(t => t.type === "Ticket").length === 0 && !isLoading && (
-                 <p className="text-gray-400 italic">No tickets found.</p>
-            )}
-          </div>
-        </div>
-
+        <ProfileBadges badges={badges} isLoading={isLoading} />
+        <ProfileTickets tickets={eventTickets} isLoading={isLoading} />
       </div>
+      
     </div>
   );
 }
