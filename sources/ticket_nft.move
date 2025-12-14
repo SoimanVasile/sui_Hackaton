@@ -21,6 +21,7 @@ module suihackaton::ticket_nft {
     public struct Ticket has key, store {
         id: UID,
         event_id: ID,
+        owner: address,
         name: String,
         description: String,
         url: Url,
@@ -43,6 +44,12 @@ module suihackaton::ticket_nft {
         ticket_id: ID,
         event_id: ID,
         validator: address
+    }
+
+    public struct TicketTransferred has copy, drop {
+        ticket_id: ID,
+        old_owner: address,
+        new_owner: address
     }
 
     public entry fun create_event(
@@ -83,20 +90,20 @@ module suihackaton::ticket_nft {
     ) {
         let price = event_obj.price;
         let value_paid = coin::value(&payment);
+        let sender = tx_context::sender(ctx);
         
         assert!(value_paid == price, 0);
 
         transfer::public_transfer(payment, event_obj.organizer);
-
-        let sender = tx_context::sender(ctx);
         
         let ticket = Ticket {
             id: object::new(ctx),
             event_id: object::id(event_obj),
+            owner: sender,
             name: event_obj.name,
             description: event_obj.description,
             url: url::new_unsafe_from_bytes(*string::bytes(&event_obj.image_url)),
-            is_used: false, // ✅ Initialize as unused
+            is_used: false,
         };
 
         let ticket_id = object::uid_to_inner(&ticket.id);
@@ -107,7 +114,25 @@ module suihackaton::ticket_nft {
             buyer: sender,
         });
 
-        transfer::public_transfer(ticket, sender);
+        transfer::share_object(ticket);
+    }
+
+    public entry fun transfer_ticket(
+        ticket: &mut Ticket,
+        new_owner: address,
+        ctx: &mut TxContext
+    ) {
+        let sender = tx_context::sender(ctx);
+        assert!(ticket.owner == sender, 105);
+        
+        let old_owner = ticket.owner;
+        ticket.owner = new_owner;
+
+        event::emit(TicketTransferred {
+            ticket_id: object::id(ticket),
+            old_owner,
+            new_owner
+        });
     }
 
     public entry fun validate_ticket(
